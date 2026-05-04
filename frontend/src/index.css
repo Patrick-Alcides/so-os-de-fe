@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Barlow", sans-serif;
+  color: #10212d;
+  background:
+    radial-gradient(circle at top left, rgba(31, 157, 85, 0.18), transparent 32%),
+    linear-gradient(180deg, #faf7f0 0%, #f1eee8 100%);
+  min-height: 100vh;
+}
+
+html.dark body {
+  color: #e5edf5;
+  background:
+    radial-gradient(circle at top left, rgba(31, 157, 85, 0.24), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.9), transparent 34%),
+    linear-gradient(180deg, #07131d 0%, #0f1b26 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.panel {
+  @apply rounded-3xl border border-white/70 bg-white/90 shadow-panel backdrop-blur;
+}
+
+.field {
+  @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+}
+
+.button-primary {
+  @apply inline-flex items-center justify-center rounded-2xl bg-ink px-5 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.button-secondary {
+  @apply inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-5 py-3 font-semibold text-ink transition hover:border-ink;
+}
+
+html.dark .panel {
+  border-color: rgba(51, 65, 85, 0.8);
+  background: rgba(15, 23, 42, 0.88);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .field {
+  border-color: #334155;
+  background: #0f1b26;
+  color: #f8fafc;
+}
+
+html.dark .button-secondary {
+  border-color: #475569;
+  background: #0f1b26;
+  color: #f8fafc;
+}
+
+html.dark .bg-white {
+  background-color: rgba(15, 23, 42, 0.92) !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: rgba(30, 41, 59, 0.72) !important;
+}
+
+html.dark .bg-brand-50 {
+  background-color: rgba(20, 83, 45, 0.28) !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: rgba(120, 53, 15, 0.28) !important;
+}
+
+html.dark .text-ink,
+html.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+  border-color: rgba(71, 85, 105, 0.72) !important;
+}
