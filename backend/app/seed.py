@@ -5,6 +5,52 @@ from sqlalchemy.orm import Session
 from .auth import hash_password
 from .models import Config, Payment, Player, User, Vote, VoteSession
 
+ADMIN_EMAIL = "admin@soosdefe.com"
+ADMIN_NAME = "Patrick Alcides"
+ADMIN_PHONE = "(51) 99208-6770"
+ADMIN_PASSWORD = "34831366"
+
+
+def normalize_phone(phone: str | None) -> str:
+    return "".join(char for char in (phone or "") if char.isdigit())
+
+
+def find_player_by_phone(db: Session, phone: str) -> Player | None:
+    normalized_phone = normalize_phone(phone)
+    players = db.query(Player).all()
+    return next((player for player in players if normalize_phone(player.telefone) == normalized_phone), None)
+
+
+def ensure_admin_user(db: Session) -> None:
+    admin_player = find_player_by_phone(db, ADMIN_PHONE)
+    if not admin_player:
+        admin_player = Player(nome=ADMIN_NAME, telefone=ADMIN_PHONE, posicao="linha", ativo=True)
+        db.add(admin_player)
+        db.flush()
+    else:
+        admin_player.nome = ADMIN_NAME
+        admin_player.telefone = ADMIN_PHONE
+        admin_player.ativo = True
+
+    admin_user = db.query(User).filter(User.tipo == "administrador").first()
+    if not admin_user:
+        admin_user = db.query(User).filter(User.email == ADMIN_EMAIL).first()
+
+    if admin_user:
+        admin_user.email = ADMIN_EMAIL
+        admin_user.senha_hash = hash_password(ADMIN_PASSWORD)
+        admin_user.tipo = "administrador"
+        admin_user.jogador_id = admin_player.id
+    else:
+        db.add(
+            User(
+                email=ADMIN_EMAIL,
+                senha_hash=hash_password(ADMIN_PASSWORD),
+                tipo="administrador",
+                jogador_id=admin_player.id,
+            )
+        )
+
 
 def create_seed_data(db: Session) -> None:
     if not db.query(Config).first():
@@ -68,8 +114,8 @@ def create_seed_data(db: Session) -> None:
         admin_player = players[0]
         db.add(
             User(
-                email="admin@soosdefe.com",
-                senha_hash=hash_password("admin123"),
+                email=ADMIN_EMAIL,
+                senha_hash=hash_password(ADMIN_PASSWORD),
                 tipo="administrador",
                 jogador_id=admin_player.id,
             )
@@ -105,4 +151,5 @@ def create_seed_data(db: Session) -> None:
         ]
         db.add_all(sample_votes)
 
+    ensure_admin_user(db)
     db.commit()
