@@ -73,13 +73,23 @@ def find_user_by_phone(db: Session, phone: str) -> User | None:
     return None
 
 
-def upsert_player_user(db: Session, player: Player, password: str | None, user_type: str = "jogador") -> None:
-    if not password:
-        return
+def normalize_user_type(user_type: str | None) -> str:
+    normalized = (user_type or "jogador").strip().lower()
+    if normalized not in {"jogador", "administrador"}:
+        raise HTTPException(status_code=400, detail="Tipo de acesso invalido.")
+    return normalized
 
+
+def upsert_player_user(db: Session, player: Player, password: str | None, user_type: str = "jogador") -> None:
+    user_type = normalize_user_type(user_type)
     user = db.query(User).filter(User.jogador_id == player.id).first()
     if user:
-        user.senha_hash = hash_password(password)
+        user.tipo = user_type
+        if password:
+            user.senha_hash = hash_password(password)
+        return
+
+    if not password:
         return
 
     login_label = normalize_phone(player.telefone) or f"jogador{player.id}"
@@ -142,6 +152,7 @@ def serialize_player(db: Session, player: Player, averages: dict[int, float]) ->
         "foto": player.foto,
         "posicao": player.posicao,
         "ativo": player.ativo,
+        "tipo_acesso": player.usuario.tipo if player.usuario else "jogador",
         "pagamento_status": current_month_payment,
         "media_geral": averages.get(player.id, 0.0),
     }
@@ -341,6 +352,7 @@ def create_player(
     telefone: str | None = Form(None),
     posicao: str = Form(...),
     ativo: bool = Form(True),
+    tipo_acesso: str = Form("jogador"),
     senha: str | None = Form(None),
     foto_url: str | None = Form(None),
     db: Session = Depends(get_db),
@@ -357,7 +369,7 @@ def create_player(
     )
     db.add(player)
     db.flush()
-    upsert_player_user(db, player, senha)
+    upsert_player_user(db, player, senha, tipo_acesso)
     db.commit()
     db.refresh(player)
     averages, _ = build_vote_metrics(db)
@@ -400,6 +412,7 @@ def update_player(
     telefone: str | None = Form(None),
     posicao: str = Form(...),
     ativo: bool = Form(True),
+    tipo_acesso: str = Form("jogador"),
     senha: str | None = Form(None),
     foto_url: str | None = Form(None),
     db: Session = Depends(get_db),
@@ -415,7 +428,7 @@ def update_player(
     player.posicao = posicao
     player.ativo = ativo
     player.foto = normalize_photo_url(foto_url)
-    upsert_player_user(db, player, senha)
+    upsert_player_user(db, player, senha, tipo_acesso)
     db.commit()
     db.refresh(player)
     averages, _ = build_vote_metrics(db)

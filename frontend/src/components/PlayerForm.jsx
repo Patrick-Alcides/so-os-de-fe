@@ -6,6 +6,7 @@ const initialState = {
   telefone: "",
   posicao: "linha",
   ativo: true,
+  tipo_acesso: "jogador",
   senha: "",
   foto_url: "",
 };
@@ -20,6 +21,7 @@ export default function PlayerForm({ onSubmit, editingPlayer, onCancel, mode = "
           telefone: editingPlayer.telefone || "",
           posicao: editingPlayer.posicao,
           ativo: editingPlayer.ativo,
+          tipo_acesso: editingPlayer.tipo_acesso || "jogador",
           senha: "",
           foto_url: editingPlayer.foto || "",
         }
@@ -59,6 +61,15 @@ export default function PlayerForm({ onSubmit, editingPlayer, onCancel, mode = "
           <option value="true">Ativo</option>
           <option value="false">Inativo</option>
         </select>
+      ) : null}
+      {!isSelfEdit ? (
+        <label className="grid gap-2 text-sm font-semibold text-slate-600">
+          Tipo de acesso
+          <select className="field" value={form.tipo_acesso} onChange={(e) => update("tipo_acesso", e.target.value)}>
+            <option value="jogador">Jogador comum</option>
+            <option value="administrador">Administrador</option>
+          </select>
+        </label>
       ) : null}
       <input
         className="field"

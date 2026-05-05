@@ -17,6 +17,10 @@ function buildInitialPaymentForm(player) {
   };
 }
 
+function formatAccessType(type) {
+  return type === "administrador" ? "Administrador" : "Jogador comum";
+}
+
 export default function PlayersPage() {
   const { user, refreshUser } = useAuth();
   const [players, setPlayers] = useState([]);
@@ -206,6 +210,11 @@ export default function PlayersPage() {
                 <div>
                   <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Pagamento</p>
                   <PaymentBadge status={player.pagamento_status} />
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Tipo de acesso</p>
+                  <p className="text-sm font-semibold text-slate-700">{formatAccessType(player.tipo_acesso)}</p>
                 </div>
 
                 <div>
