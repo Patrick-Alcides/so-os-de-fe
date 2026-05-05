@@ -25,7 +25,7 @@ function buildMonthCalendar() {
     const date = new Date(year, month, day);
     days.push({
       day,
-      isTuesday: date.getDay() === 2,
+      isFriday: date.getDay() === 5,
       isToday: date.toDateString() === today.toDateString(),
     });
   }
@@ -176,15 +176,15 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
-          <StatCard title="Custo da quadra" value={money(data.custo_quadra_mes_atual)} subtitle={`${data.total_tercas_no_mes} terças-feiras no mês atual`} />
+          <StatCard title="Custo da quadra" value={money(data.custo_quadra_mes_atual)} subtitle={`${data.total_tercas_no_mes} sextas-feiras no mês atual`} />
           <div className="panel p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-700">Tercas do mes</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-700">Sextas do mes</p>
                 <h3 className="mt-1 font-['Space_Grotesk'] text-2xl font-bold capitalize">{calendar.monthName}</h3>
               </div>
               <div className="rounded-2xl bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700">
-                {data.total_tercas_no_mes} tercas
+                {data.total_tercas_no_mes} sextas
               </div>
             </div>
             <div className="mt-5 grid grid-cols-7 gap-2 text-center text-sm">
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                 <div
                   key={day ? day.day : `empty-${index}`}
                   className={`flex aspect-square items-center justify-center rounded-2xl font-semibold ${
-                    day?.isTuesday
+                    day?.isFriday
                       ? "border-2 border-rose-500 bg-rose-50 text-rose-700"
                       : day?.isToday
                         ? "border-2 border-brand-500 bg-brand-50 text-brand-700"

@@ -45,9 +45,9 @@ def normalize_photo_url(photo_url: str | None) -> str | None:
     return photo_url.strip() or None
 
 
-def count_tuesdays(target_date: date) -> int:
+def count_fridays(target_date: date) -> int:
     total_days = monthrange(target_date.year, target_date.month)[1]
-    return sum(1 for day in range(1, total_days + 1) if date(target_date.year, target_date.month, day).weekday() == 1)
+    return sum(1 for day in range(1, total_days + 1) if date(target_date.year, target_date.month, day).weekday() == 4)
 
 
 def get_current_config(db: Session) -> Config:
@@ -245,8 +245,8 @@ def dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     del current_user
     config = get_current_config(db)
     today = date.today()
-    total_tuesdays = count_tuesdays(today)
-    court_cost = 500 if total_tuesdays == 5 else 400
+    total_fridays = count_fridays(today)
+    court_cost = total_fridays * 100
     averages, _ = build_vote_metrics(db)
     active_players = db.query(Player).filter(Player.ativo.is_(True)).all()
     best_player = None
@@ -258,7 +258,7 @@ def dashboard(db: Session = Depends(get_db), current_user: User = Depends(get_cu
     return {
         "config": config,
         "custo_quadra_mes_atual": court_cost,
-        "total_tercas_no_mes": total_tuesdays,
+        "total_tercas_no_mes": total_fridays,
         "total_jogadores_ativos": len(active_players),
         "total_em_dia": sum(1 for status in statuses if status == "OK"),
         "total_devendo": sum(1 for status in statuses if status != "OK"),
