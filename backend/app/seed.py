@@ -32,9 +32,11 @@ def ensure_admin_user(db: Session) -> None:
         admin_player.telefone = ADMIN_PHONE
         admin_player.ativo = True
 
-    admin_user = db.query(User).filter(User.tipo == "administrador").first()
+    admin_user = db.query(User).filter(User.email == ADMIN_EMAIL).first()
     if not admin_user:
-        admin_user = db.query(User).filter(User.email == ADMIN_EMAIL).first()
+        admin_user = db.query(User).filter(User.jogador_id == admin_player.id).first()
+    if not admin_user:
+        admin_user = db.query(User).filter(User.tipo == "administrador").first()
 
     if admin_user:
         admin_user.email = ADMIN_EMAIL
