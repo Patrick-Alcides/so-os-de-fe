@@ -30,7 +30,7 @@ export default function LoginPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-100">Toda sexta-feira</p>
           <h1 className="mt-4 font-['Space_Grotesk'] text-5xl font-bold leading-tight">Gerencie o grupo, o caixa, as votacoes e os times em um so lugar.</h1>
           <p className="mt-5 max-w-xl text-lg text-white/75">
-            Painel para administradores e jogadores com foco em pagamentos, historico de medias e montagem equilibrada dos times.
+            Painel para administradores e jogadores acompanharem pagamentos, caixa do grupo e ranking de gols da sexta-feira.
           </p>
         </div>
 
